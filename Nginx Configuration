@@ -1,0 +1,64 @@
+Configure Nginx to Host Multiple Websites
+*******************************************
+
+systemctl status nginx
+
+create 2 web directory and its content and Then, change the ownership of both website directories to www-data:
+
+mkdir /var/www/html/web1.webdock.io
+mkdir /var/www/html/web2.webdock.io
+
+
+chown -R www-data:www-data /mywebsites/www.mostya.com
+chown -R www-data:www-data /mywebsites/www.mostya.org
+
+
+Create Virtual Configuration
+******************************
+First, create a virtual host configuration file for the web1.webdock.io website:
+
+	nano /etc/nginx/sites-available/web1.webdock.io.conf
+		
+	Add the following lines:
+		
+	
+	server {
+        listen 80;
+        listen [::]:80;
+        root /var/www/html/web1.webdock.io;
+        index index.html index.htm;
+        server_name web1.webdock.io;
+
+   location / {
+       try_files $uri $uri/ =404;
+   }
+
+}
+Save and close the file. Then, create a virtual host configuration file for the web2.webdock.io website:
+
+nano /etc/nginx/sites-available/web2.webdock.io.conf
+
+Add the following lines:
+server {
+        listen 80;
+        listen [::]:80;
+        root /var/www/html/web2.webdock.io;
+        index index.html index.htm;
+        server_name web2.webdock.io;
+
+   location / {
+       try_files $uri $uri/ =404;
+   }
+
+}
+
+Save and close the file. Then, enable each virtual host with the following command:
+
+$ ln -s /etc/nginx/sites-available/web1.webdock.io.conf /etc/nginx/sites-enabled/
+$ ln -s /etc/nginx/sites-available/web2.webdock.io.conf /etc/nginx/sites-enabled/
+
+Next, check Nginx for any syntax error with the following command:
+
+$ nginx -t
+
+$ systemctl restart nginx
