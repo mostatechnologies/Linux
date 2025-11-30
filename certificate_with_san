@@ -1,26 +1,33 @@
 Craete a .conf file
 
-[ req ]
-default_bits       = 2048
-distinguished_name = req_distinguished_name
-req_extensions     = req_ext
-[ req_distinguished_name ]
-countryName                 = GB
-stateOrProvinceName         = Cambs
-localityName               = Peterborough
-organizationName           = Net Assured Limited
-commonName                 = Common Name (e.g. server FQDN or YOUR name)
-[ req_ext ]
-subjectAltName = @alt_names
-[alt_names]
-DNS.1   = prtg1.corp.netassured.co.uk
-DNS.2   = www.prtg1.corp.netassured.co.uk
+		[req]
+		distinguished_name = req_distinguished_name
+		req_extensions = v3_req
+		prompt = no
+		[req_distinguished_name]
+		C = US
+		ST = VA
+		L = SomeCity
+		O = MyCompany
+		OU = MyDivision
+		CN = www.company.com
+		[v3_req]
+		keyUsage = keyEncipherment, dataEncipherment
+		extendedKeyUsage = serverAuth
+		subjectAltName = @alt_names
+		[alt_names]
+		DNS.1 = www.company.com
+		DNS.2 = company.com
+		DNS.3 = www.company.net
+		DNS.4 = company.net
+
 
   Generate CSR
 ********************
 
-sudo openssl req -out prtg1-corp-netassured-co-uk.csr -newkey rsa:2048 -nodes -keyout prtg1-corp-netassured-co.uk.key -config openssl-csr.conf
+openssl req -new -out company_san.csr -newkey rsa:2048 -nodes -sha256 -keyout company_san.key.temp -config req.conf
+	
 
   Check csr if SAN there or not
 **********************************
-openssl req -noout -text -in prtg1-corp-netassured-co-uk.csr
+openssl req -text -noout -verify -in company_san.csr
